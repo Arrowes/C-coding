@@ -1,0 +1,3 @@
+/home/ywang85/c/cmake/cmake-opencv/build/CMakeFiles/rebuild_cache.dir
+/home/ywang85/c/cmake/cmake-opencv/build/CMakeFiles/edit_cache.dir
+/home/ywang85/c/cmake/cmake-opencv/build/CMakeFiles/EDGE.dir

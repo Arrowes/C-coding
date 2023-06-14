@@ -1,0 +1,5 @@
+/home/ywang85/c/cmake/t2/build/tmp/doc/COPYRIGHT
+/home/ywang85/c/cmake/t2/build/tmp/doc/README
+/home/ywang85/c/cmake/t2/build/tmp/bin/runhello.sh
+/home/ywang85/c/cmake/t2/build/tmp/doc/hello.txt
+/home/ywang85/c/cmake/t2/build/tmp/bin/hello

@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/main.dir/main.o  -o main  -Wl,-rpath,/home/ywang85/c/cmake/t3/build/t3/lib /home/ywang85/c/cmake/t3/build/t3/lib/libhello.so 
