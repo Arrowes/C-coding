@@ -1,0 +1,5 @@
+﻿cl : 命令行 warning D9035: “Gm”选项已否决，并将在将来的版本中移除
+  escape.c
+LINK : warning LNK4076: 增量状态文件“.\Debug\escape.ilk”无效(将删除)；正以非增量方式链接
+escape.obj : warning LNK4075: 忽略“/EDITANDCONTINUE”(由于“/SAFESEH”规范)
+  escape.vcxproj -> D:\嵌入式开发资料\C Primer Plus\C Primer Plus 第六版 源代码\Ch03\Debug\escape.exe

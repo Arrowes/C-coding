@@ -1,0 +1,39 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: praise1 - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\lenovo\AppData\Local\Temp\RSPBF43.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"Debug/praise1.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"E:\C语言\C Primer Plus\C Primer Plus 第六版 源代码\Ch04\praise1.c"
+]
+Creating command line "cl.exe @C:\Users\lenovo\AppData\Local\Temp\RSPBF43.tmp" 
+Creating temporary file "C:\Users\lenovo\AppData\Local\Temp\RSPBF44.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/praise1.pdb" /debug /machine:I386 /out:"Debug/praise1.exe" /pdbtype:sept 
+".\Debug\praise1.obj"
+]
+Creating command line "link.exe @C:\Users\lenovo\AppData\Local\Temp\RSPBF44.tmp"
+<h3>Output Window</h3>
+Compiling...
+praise1.c
+E:\C语言\C Primer Plus\C Primer Plus 第六版 源代码\Ch04\praise1.c(9) : warning C4047: 'function' : 'int ' differs in levels of indirection from 'char [10]'
+E:\C语言\C Primer Plus\C Primer Plus 第六版 源代码\Ch04\praise1.c(9) : warning C4024: 'fgets' : different types for formal and actual parameter 2
+E:\C语言\C Primer Plus\C Primer Plus 第六版 源代码\Ch04\praise1.c(9) : error C2198: 'fgets' : too few actual parameters
+E:\C语言\C Primer Plus\C Primer Plus 第六版 源代码\Ch04\praise1.c(11) : warning C4013: 'PRAI' undefined; assuming extern returning int
+E:\C语言\C Primer Plus\C Primer Plus 第六版 源代码\Ch04\praise1.c(11) : error C2143: syntax error : missing ')' before ';'
+E:\C语言\C Primer Plus\C Primer Plus 第六版 源代码\Ch04\praise1.c(11) : error C2059: syntax error : ')'
+E:\C语言\C Primer Plus\C Primer Plus 第六版 源代码\Ch04\praise1.c(11) : error C2065: 'SE' : undeclared identifier
+执行 cl.exe 时出错.
+
+
+
+<h3>Results</h3>
+praise1.exe - 1 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

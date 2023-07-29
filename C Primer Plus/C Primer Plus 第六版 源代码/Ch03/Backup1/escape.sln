@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "escape", "escape.vcxproj", "{FD2106B9-1627-4C11-B72B-97E4F5B5E7A4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD2106B9-1627-4C11-B72B-97E4F5B5E7A4}.Debug|x86.ActiveCfg = Debug|Win32
+		{FD2106B9-1627-4C11-B72B-97E4F5B5E7A4}.Debug|x86.Build.0 = Debug|Win32
+		{FD2106B9-1627-4C11-B72B-97E4F5B5E7A4}.Release|x86.ActiveCfg = Release|Win32
+		{FD2106B9-1627-4C11-B72B-97E4F5B5E7A4}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EBF9FAF4-0DBA-4C03-A4BD-DF28313C95DB}
+	EndGlobalSection
+EndGlobal
