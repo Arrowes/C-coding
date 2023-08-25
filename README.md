@@ -4,12 +4,173 @@ date: 2023-05-16 09:43:00
 tags:
 - C/C++
 ---
-# C++
+项目地址：[C-coding](https://github.com/Arrowes/C-coding)
+# C
+[C Primer Plus(第六版)中文版](https://img.anfulai.cn/bbs/94810/C%20Primer%20Plus(%E7%AC%AC%E5%85%AD%E7%89%88)%E4%B8%AD%E6%96%87%E7%89%88.pdf)
 
-## 基于VScode用cmake搭建C++编译调试环境
-1. 安装VScode插件：C/C++，cmake，cmake tools
-2. 按F1，选择cmake:Quick Start,创建一个cmake工程
-3. 点击左侧栏的CMake工具按钮,右键可执行文件，选择Debug,进入调试界面
+--------------------------------------------------------------
+
+# C++
+[21天学通C++第8版](https://github.com/Arrowes/C-coding/blob/main/C%2B%2B/21%E5%A4%A9%E5%AD%A6%E9%80%9AC%2B%2B%E7%AC%AC8%E7%89%88%20%E9%AB%98%E6%B8%85%E5%AE%8C%E6%95%B4PDF.pdf)
+## 1.绪论
+C++最初由 Bjarne Stroustroup 于 1979 年在贝尔实验室开发，旨在作为 C 语言的继任者。但不同于C 语言，C++是一种面向对象的语言，实现了继承、抽象、多态和封装等概念。
+C++是一种中级编程语言，这意味着使用它既可以高级编程方式编写应用程序，又可以低级编程方式编写与硬件紧密协作的库。
+
+构建可执行文件：编写代码(.cpp) > 编译器(.o / .obj) > 链接器(.exe)
+
+```c++
+#include <iostream>  //标准头文件，引入std::cout
+int main()
+{
+    std::cout << "Hello World!!" << std::endl; // <<：流插入运算符
+    return 0;  //cout 是在名称空间 std 中定义的一个流, 用来显示
+}
+```
+
+**开发环境**：Visual studio code + GCC compiler/MinGW, 按F5 Choose `C/C++: g++.exe build and debug active file`, 将编译、链接并执行应用程序
+
+## 2.C++程序的组成部分
++ 预处理器编译指令 `#include`
+   `#include "...relative path to .\FileB"`包含自定义头文件，`<>`用来包含自定义头文件 
++ 程序主体 `main()`
+程序的起点，前面的int是一种标准化约定，表示返回类型为整数
++ 返回值
+在 C++中，除非明确声明了不返回值，否则函数必须返回一个值，根据约定，程序员在程序运行成功时返回 0，并在出现错误时返回−1
+
+**namespace名称空间**：是给代码指定的名称，有助于降低命名冲突的风险，如`std::cout`:调用名称空间 std 中独一无二的 cout, 若要省略std::, 先加入`using namespace std`
+
+**注释**：
+```c
+//单行注释
+/* 跨行
+   注释
+*/
+```
+cin 可用于从用户那里获取文本输入和数字输入`std::cin >> Variable1 >> Variable2; `
+
+## 3.使用变量和常量
+### 变量
+`VariableType VariableName = InitialValue;`
+变量类型向编译器指出了变量可存储的数据的性质，编译器将为变量预留必要的空间。变量名由程序员选择，它替代了变量值在内存中的存储地址;
+函数内部声明的为*局部变量*，作用域为局部，被限定在声明它的函数内，函数结束后，将销毁所有局部变量，并归还它们占用的内存；在函数外部声明的则为*全局变量*。
+
+命名约定：对于变量名，采用*骆驼拼写法*(firstNumber, 第一个单词的首字母采用小写)，而对于诸如函数名等其他元素，采用 *Pascal 拼写法*(MultiplyNumbers(), 函数名每个首字母都大写)。
+
+编译器支持的常见 C++变量类型:
+| 类型               | 值                      |概念|
+|-------------------|--------------------------|-----|
+| bool              | true/false               |布尔变量
+| char              | 256个字符值               |存储单字符,如'A'
+| unsigned short int | 0～65535                 |占16位内存=$2^{16}$=65536
+| short int         | –32768～32767             |最高有效位（MSB）做符号位
+| unsigned long int | 0～4294967295             |$2^{32}$
+| long int          | –2147483648～2147483647   |
+| int (16位)         | –32768～32767            |
+| int (32位)         | –2147483648～2147483647  |
+| unsigned int（16位）| 0～65535                |
+| unsigned int（32位） | 0～4294967295          |
+| float             | 1.2e–38～3.4e38           |浮点数
+| double            | 2.2e–308～1.8e308         |双精度浮点数
+
+sizeof 确定变量长度（字节）：`sizeof (int)`
+使用列表初始化避免缩窄转换错误：`int anotherNum{ largeNum };`
+关键字 auto 自动推断类型：`auto coinFlippedHeads = true`
+typedef 替换变量类型: `typedef unsigned int MYINT; `
+
+### 常量
+在 C++中，常量类似于变量，只是不能修改。
++ 字面常量：可以是任何类型：布尔型、整型、字符串等
++ 使用关键字 const 将变量声明为常量(最实用): `const double pi = 22.0 / 7;`
++ 使用 constexpr 定义常量表达式: `constexpr double GetPi() {return 22.0 / 7;} `
++ 使用关键字 enum 声明枚举: 指定一组特定的取值，枚举量起始值默认为0
++ ~~使用#define 定义常量：`#define pi 3.14286`, 已被摒弃~~
+
+务必确保变量名阐述了变量的用途。
+务必对变量进行初始化，确保变量包含非随机的确定值；并使用列表初始化来避免缩窄转换错误。
+不要将保留的 C++关键字用作变量名，因为这将导致程序无法通过编译。
+
+## 4.管理数组和字符串
+### 数组
+在 C++中，数组让您能够按顺序将一系列相同类型的数据存储到内存中。
+
+**静态数组：**
+```c
+int myNumbers [5] = {}; //声明一个包含 5 个 int 元素的数组，并将每个元素都初始化为零
+char myCharacters [5];  //定义一个包含 5 个字符的数组
+Num = myNumbers [0];    //取出第一个元素 
+myNumbers [3] = 2023;   //重新赋值
+//Bytes consumed by an array = sizeof(element-type) * Number of Elements 
+//务必初始化数组，否则其元素将包含未知值。使用数组时，务必确保在其边界内。
+
+//在 C++中，可在内存中模拟多维数组(但存储数组的内存是一维的)
+int array [2][3] = {{0, 1, 2}, {3, 4, 5}};  //or {0, 1, 2, 3, 4, 5}
+Num1 = array [0][1]  //取出元素1
+```
+**动态数组** `std::vector`：
+```c
+#include <vector>
+vector<int> dynArray (3); //这个矢量能动态地调整其长度，以存储更多数据，且无需初始化
+```
+### 字符串
+C 风格字符串（危险）：
+```c
+std::cout << "Hello World"; 
+//等同于：
+char sayHello[] = {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '\0'};
+std::cout << sayHello
+//空字符‘\0’,也被称为字符串结束字符，告诉编译器字符串到此结束。不算长度
+//如果没有在字符数组末尾添加空字符，可能跨越字符数组的边界,被称为缓冲区溢出
+```
+**C++字符串**：使用 `std::string`:
+使用 C++标准字符串是更高效、更安全的方式。不同于字符数组（C 风格字符串实现），std::string 是动态的
+```c
+#include <string> 
+string greetString ("Hello std::string!");
+```
+
+## 5.使用表达式、语句和运算符
+从本质上说，程序是一组按顺序执行的命令。这些命令为表达式和语句，使用运算符执行特定的计算或操作。
+
++ 语句：分号界定了语句的边界; 要将一条语句放到两行中，可在第一行末尾添加反斜杠`\`; 可使用花括号（{}）将多条语句组合在一起，以创建复合语句（语句块）
++ 运算符：
+   + `=` 赋值运算符，左值通常是内存单元，右值可以是内存单元的内容。
+   + `+ - * / %` 求模运算符%返回除法运算的余数，只能用于整数
+   + `++ --` 递增和递减运算符，分为前缀与后缀：
+      ```c
+      int num = ++num;  //前缀，先＋再赋值
+      int num = num++;  //后缀，先赋值再+
+      ```
+   + `== !=`   相等性检查的结果为布尔值，即 true 或 false, 1 / 0
+   + `< > <= >=`
+   + 逻辑运算符(返回布尔值)：
+      ```c
+      !  //NOT 用于单个操作数，用于反转
+      && //AND, 2true则true
+      || //OR, 1true就true
+      ^  //XOR异或，1true才true
+      ```
+   + 按位运算符（返回运算结果）：` ~  &  |  ^ `
+   + 移位运算符,用途之一是将数据乘以或除以 $2^n$
+      ```c
+      int halfNum = inputNum >> 1;
+      int quadrupleNum = inputNum << 2;
+      ```
+   + 复合赋值运算符,将运算结果赋给左边的操作数 `num1 += num2;`
+   + 运算符 `sizeof`, 确定变量占用的内存量
+
+运算符优先级,C++标准非常严格地指定了各种运算的执行顺序:
+`int myNumber = 10 * 30 + 20 – 5 * 5 << 2;` 应写作 `int myNumber = ((10 * 30) – (5 * 5) + 20) << 2;`，使用括号让代码和表达式易于理解
+
+
+## 6.控制程序流程
+
+
+
+
+
+
+
+------------------------------------------------------------------
 
 # Cmake
 [CMake](www.cmake.org) 是一个跨平台的开源构建管理系统，用于自动化应用程序的构建、测试和打包过程。它使用类似于Makefile的文本文件来描述构建过程中所需的所有组件和依赖项，并将其转换为适合各种不同编译器和操作系统的本地构建系统的配置文件。总之，CMake就是一个将多个cpp,hpp文件组合构建为一个大工程的语言。
@@ -202,6 +363,13 @@ make  #生成可执行文件
 ./EDGE   #运行边缘提取执行文件
 ```
 <img src="https://raw.sevencdn.com/Arrowes/Arrowes-Blogbackup/main/images/Cedge.png" width="50%">
+
+
+## 基于VScode用cmake搭建C++编译调试环境
+1. 安装VScode插件：C/C++，cmake，cmake tools
+2. 按F1，选择cmake:Quick Start,创建一个cmake工程
+3. 点击左侧栏的CMake工具按钮,右键可执行文件，选择Debug,进入调试界面
+
 
 ## gcc/g++,MinGW/MSVC与make/CMake/qmake
 **GNU**/Linux：简称Linux，包括Ubuntu，Debian，CentOS，自带gcc； 
