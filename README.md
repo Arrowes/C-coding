@@ -8,6 +8,18 @@ tags:
 # C
 [C Primer Plus(第六版)中文版](https://img.anfulai.cn/bbs/94810/C%20Primer%20Plus(%E7%AC%AC%E5%85%AD%E7%89%88)%E4%B8%AD%E6%96%87%E7%89%88.pdf)
 
+```c
+system("read -p 'Press Enter to continue...' var");//linux按任意键继续命令
+system("clear");//linux清屏操作
+
+system("pause"); //windows请按任意键继续
+system("cls");//windows清屏操作
+```
+
+
+
+
+--------------------------------------------------------------
 --------------------------------------------------------------
 
 # C++
@@ -163,6 +175,895 @@ string greetString ("Hello std::string!");
 
 
 ## 6.控制程序流程
+### 条件执行
+`if...else`  条件不为0就被视为true
+`if...else if...else`   
+`switch-case`  条件处理,相比if-else-if结构化程度更高
+```c
+switch(expression)   
+{ //计算 expression 的值，并将其与每个 case 标签进行比较
+case LabelA:   //务必将枚举量用作 case 标签，以提高代码的可读性。
+ DoSomething; 
+ break;  //退出当前代码块
+// And so on... 
+default: 
+ DoStuffWhenExpressionIsNotHandledAbove; 
+ break; 
+}
+```
+`?:` 条件运算符/三目运算符, 相当于紧凑的 if-else 结构
+`(conditional expression evaluated to bool) ? expression1 if true : expression2 
+if false; `
+
+### 循环执行 
+`goto`   (避免使用 goto，可防止代码不直观且难以维护。)
+```c
+SomeFunction() 
+{  //不推荐使用 goto 语句来编写循环
+Start: // Called a label 
+ CodeThatRepeats; 
+ goto Start; 
+} 
+```
+`while` 只要条件为 true，就将反复执行该语句块
+```c
+while(expression) 
+{ 
+ // Expression evaluates to true 
+ StatementBlock; 
+}
+```
+`do...while` 循环逻辑至少执行一次时
+```c
+do 
+{ 
+ StatementBlock; // executed at least once 
+} while(condition); // ends loop if condition evaluates to false 
+```
+`for`
+```c
+for (初始化语句 executed only once;  //迭代器
+ 条件表达式 executed at the beginning of every loop; 
+ 修改变量 executed at the end of every loop) 
+{ //以上三项都是可选的
+ DoSomething; 
+}
+```
+C++11引入了*基于范围的 for 循环*，让对一系列值（如数组包含的值）进行操作的代码更容易编写和理解。
+```c
+char charArray[] = { 'h', 'e', 'l', 'l', 'o' }; 
+for (auto aChar : charArray) 
+   cout << aChar << ' '; 
+cout << endl;  //h e l l o 
+```
+`continue` 能够跳转到循环开头，跳过循环块中后面的代码;
+`break` 退出循环块，即结束当前循环。
+
+控制无限循环
+```c
+for (;;) // no condition supplied = unending for 
+{ 
+ DoSomethingRepeatedly; 
+ if(expression) 
+ break; // 使用 break 退出无限 for 循环
+} 
+```
+
+## 7.使用函数组织代码
+函数让您能够划分和组织程序的执行逻辑。通过使用函数，可将应用程序的内容划分成依次调用的逻辑块。
++ 声明函数原型
+`double Area(double radius)` = 返回值类型 函数名(函数接受的参数列表)
+函数可接受用逗号分隔的多个参数，但只能有一种返回类型。可以给多个参数指定默认值，但这些参数*必须位于参数列表的末尾*。
++ 定义函数
+函数定义由一个语句块组成。除非返回类型被声明为 void，否则函数必须包含一条 return 语句;
++ 调用函数
+如果函数声明中包含形参（parameter），调用函数时必须提供实参（argument）
+
+递归函数：调用自己，必须有明确的退出条件
+多条 return 语句的函数：可使用 return 语句退出
+
+### 函数数据处理
+函数重载：名称和返回类型相同，但参数不同的函数被称为重载函数。
+```c
+double Area(double radius); // for circle 
+double Area(double radius, double height); // for cylinder
+//根据不同的输入使用不同的函数，实现不同的功能
+```
+数组传递给函数: `void DisplayIntegers(int[] numbers, int Length); `
+
+`&` 按引用传递参数, 让函数修改的变量在其外部（如调用函数）中也可用(详见第八章引用)：
+```c
+void Area(double radius, double &result) 
+//此时，result是指向调用函数中相应变量的引用，而不是其拷贝
+int main()：...
+   Area(radius, areaFetched); 
+//Area( )中的变量 result，与 main( )中的 double areaFetched 指向同一个内存单元。
+```
+### 微处理器如何处理函数调用
+*函数调用* 在微处理器中的过程：跳转到属于被调用函数的下一条指令处执行。执行完函数的指令后，返回到最初*离开的地方*;
+因此，编译器将函数调用转换为一条供微处理器执行的 `CALL` 指令, 指出接下来要获取的指令所在的地址，该地址归函数所有。遇到 `CALL` 指令时，微处理器将调用函数后将要执行的指令的位置保存到 **栈** 中，再跳转到 `CALL` 指令包含的内存单元处。
+> 栈是一种后进先出的内存结构，将数据加入栈被称为压入操作, 从栈中取出数据被称为弹出操作。栈增大时，栈指针将不断递增，始终指向栈顶; 
+栈的性质使其非常适合用于处理函数调用。函数被调用时，所有局部变量都在栈中实例化，即被压入栈中。函数执行完毕时，这些局部变量都从栈中弹出，栈指针返回到原来的地方。
+如：微处理器执行CALL指令指出的内存单元包含属于函数的指令，直到 RET 语句（return 语句对应的微处理器代码）导致微处理器从栈中弹出执行 CALL 指令时存储的地址。该地址包含调用函数中接下来要执行的语句的位置
+
+**内联函数**
+使用关键字 inline 发出请求，要求在函数被调用时就地展开它们：`inline double GetPi() ` 编译器通常将该关键字视为请求，请求将函数 GetPi()的内容直接放到调用它的地方，以提高代码的执行速度(因为执行函数调用的开销可能非常高)，仅当函数非常简单，需要降低其开销时，才应使用该关键字
+(根据性能设置，大多数较新的编译器都能判断应内联哪些函数，进而为程序员这样做)
+
+**自动推断返回类型**: ` auto Area(double radius)`
+
+**lambda 函数**: `[optional parameters](parameter list){ statements; } `
+lambda函数是 C++11 引入的，有助于使用 STL 算法对数据进行排序或处理，可以在需要函数对象的地方使用，用于简化代码和提高可读性。
+
+## 8.阐述指针和引用
+C++最大的优点之一是，既可使用它来编写不依赖于机器的高级应用程序，又可使用它来编写与硬件紧密协作的应用程序。能够在字节和比特级调整应用程序的性能。要编写高效地利用系统资源的程序，理解*指针和引用*是必不可少的一步。
+
+### 指针 *
+**指针是存储内存地址的变量**，是一种指向内存单元的特殊变量。
+（内存单元地址通常使用十六进制表示法）
+```c
+int* pointsToInt = NULL;   //声明指针并初始化，务必初始化指针变量，否则它将包含垃圾值。
+//例如int在内存中的地址为0x002EFB34，则占用 0x002EFB34～0x002EFB37
+&pointsToInt      //引用运算符（&）, 也叫地址运算符，用来获取变量的地址。
+
+int* pointsToInt = &age;   //使用指针存储地址(age是int变量)
+int dogsAge = 9; 
+pointsToInt = &dogsAge;    //同一个 int 指针可指向任何 int 变量
+
+++pointsToInt     //将指向下一个int, Address + sizeof(int)
+
+*pointsToInt              //解除引用运算符（*）,也叫间接运算符, 访问指向的数据
+cin >> *pointsToInt;      //使用 * 操纵数据
+```
+**动态内存分配 new delete**
+静态数组的长度是固定的，不能根据应用程序的需求增大或缩小, 因此使用 new 和 delete 动态地分配和释放内存
+```c
+int* pointToAnInt = new int;  //给整型分配内存（int* Pointer = new int[10]; 为一系列元素分配内存
+delete pointToAnInt;          //释放内存（delete[] Pointer; 
+//如果不释放，会造成内存泄露
+```
+运算符 new 和 delete 分配和释放自由存储区中的内存。自由存储区是一种内存抽象，表现为一个内存池，应用程序可分配（预留）和释放其中的内存。
+
+**将关键字 const 用于指针**
+```c
+int Age=23;
+int* const point = &Age;         //指针包含的地址是常量，不能修改，但可修改指针指向的数据
+const int* point = &Age;         //指针指向的数据为常量，不能修改，但可以修改指针包含的地址，即指针可以指向其他地方
+const int* const point = &Age;   //指针包含的地址以及它指向的值都是常量，不能修改（这种组合最严格）
+//函数参数应声明为最严格的 const 指针
+//**将指针传递给函数**: 指针是一种将内存空间传递给函数的有效方式，其中可包含函数完成其工作所需的数据，也可包含操作结果。
+```
+数组变量是指向第一个元素的指针, 类似于在固定内存范围内发挥作用的指针，因此也可将用于指针的解除引用运算符（*）用于数组
+
+**使用指针相关错误**
++ 内存泄漏：new动态分配的内存没有用delete释放
++ 无效指针：务必确保指针指向了有效的内存单元, 否则使用 * 和 delete 时会崩溃
++ 悬浮指针：使用 delete 释放后，任何有效指针都将无效，很多程序员在初始化指针或释放指针后将其设置为 NULL，并在使用运算符 * 对指针解除引用前检查它是否有效（将其与 NULL 比较）
++ new内存分配失败：大块内存分配请求不一定能成功，失败会引发 `std::bad_alloc` 异常并中断执行
+（`try-catch` 异常处理结构让程序能够向用户指出这一点，再正常退出；或可使用 new 变种 `new(nothrow)`，在内存分配失败时不引发异常，而返回 NULL，让您能够在使用指针前检查其有效性）
+
+### 引用 &
+引用运算符（&）, 也叫地址运算符，用来获取变量的地址。
+引用是变量的别名，只是另一种访问相应变量存储的数据的方式。直接调用，避免将形参复制给形参，减少复制步骤的开销，极大地提高性能
+```c
+int original = 20;
+int& ref = original; //指向相应变量所在的内存单元
+
+//可避免复制步骤的函数
+ReturnType DoSomething(Type& parameter);     //Parameter 不再是 argument 的拷贝，而是它的别名
+ReturnType Result = DoSomething(argument);   //argument 是按引用传递的
+//函数直接使用调用者栈中的数据
+
+const int& constRef = original;  //使禁止通过引用修改它指向的变量的值
+void GetSquare(const int& number, int& result)  //const 引用将参数标识为输入参数
+void GetSquare(const int* const number, int* const result)  //效果同上，但指针不同于引用，可能为 NULL 或无效，因此使用前必须核实它们是有效的
+```
+
+## 9.类和对象
+<u>现在开始面向对象</u>
+
+### 类和对象 
+将一系列数据和函数整合在一起的结构就是**类**,让您能够创建自己的数据类型，并在其中封装属性和使用它们的函数。
+(*封装指的是将数据以及使用它们的函数进行逻辑编组，这是面向对象编程的重要特征*)
+
+```c
+//声明类, 使用关键字class
+class Human
+{
+   string name;
+   string age;
+   void Talk()
+   ...
+}；         // ;结尾
+```
+
+在程序执行阶段，**对象**是类的化身。要使用类的功能，通常需要创建其实例—对象，并通过对象访问成员方法和属性。
+
+```c
+//创建 Human 的对象
+Human Man;  //Man是Human类的对象，是运行阶段的化身
+
+//可使用 new 为 Human 对象动态地分配内存
+Human* Woman = new Human(); // dynamically allocated Human 
+delete Woman; // de-allocating memory 
+```
+
++ 句点运算符 (.) 用于访问对象的属性
+   ```c
+   Man.age= "23";
+   Man.Talk();
+
+   Human* Woman = new Human(); 
+   (*Woman).Talk();
+   ```
+
++ 指针运算符（->）访问成员
+   ```c
+   Human* Woman = new Human(); 
+   Woman->age = "22";
+   Woman->Talk();
+   delete Woman;
+   ```
+例：
+```c
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Human
+{
+public:
+   string name;
+   int age;
+   void Talk()
+   { cout << "I am " + name <<", " << age <<   " years old" << endl;
+   }
+};
+
+int main()
+{
+   Human Man;
+   Man.name = "wyj";
+   Man.age = 23;
+
+   Human Woman;
+   Woman.name = "girl";
+   Woman.age = 22;
+
+   Man.Talk();
+   Woman.Talk();
+}
+
+//output:
+I am wyj, 23 years old
+I am girl, 22 years old
+```
+
+### 关键字 public 和 private
+在面向对象编程语言中，抽象是一个非常重要的概念, 作为类的设计者，使用 C++关键字 public 和 private 来指定哪些部分可从外部（如 main( )）访问，哪些部分不能。
+private私有属性和方法，访问和修改的唯一的途径就是通过类的public公有方法，这个以编写类的程序员认为的合适方式暴露。
+```c
+class Human 
+{ 
+private:
+   int age; 
+
+public: 
+   void SetAge(int humansAge) 
+   { 
+      if (humansAge > 0) 
+      age = humansAge; 
+   } 
+
+   int GetAge()
+   {
+      if(age > 30)
+         return(age - 2)   //隐藏实际数据
+      else
+         return age;
+   }
+}; 
+```
+
+### 构造函数
+构造函数是一种特殊的函数，它与类同名且不返回任何值，在实例化对象时被调用。
+
+**声明和实现**
+```c
+//在类声明中实现
+class Human 
+{ 
+public: 
+   Human()  
+   { 
+   // constructor code here 
+   } 
+}；
+
+//在类声明外实现
+class Human 
+{ 
+public: 
+ Human(); // constructor declaration 
+}; 
+// constructor implementation (definition) 
+Human::Human() //::被称为作用域解析运算符。例如，Human::dateOfBirth 指的是在 Human 类中声明的变量 dateOfBirth，而::dateOfBirth 表示全局作用域中的变量 dateOfBirth
+{ 
+ // constructor code here 
+}
+```
+
+**构造函数总是在创建对象时被调用**，这让构造函数是将类成员变量（int、指针等）**初始化为选定值**的理想场所。
+与函数一样，构造函数也可重载，创建对象时提供不同的参数会调用不同的构造函数，（*可在不提供参数的情况下调用的构造函数被称为**默认构造函数***）
+```c
+class Human 
+{ 
+private: 
+ string name; 
+ int age; 
+
+public: 
+ Human(string humansName, int humansAge = 25) 
+ { 
+ name = humansName; 
+ age = humansAge; 
+ cout << "Overloaded constructor creates " << name; 
+ cout << " of age " << age << endl; 
+ } 
+ // ... other members 
+}; 
+
+//实例化这个类时，可使用下面的语法：
+Human adam("Adam"); // adam.age is assigned a default value 25 
+Human eve("Eve", 18); // eve.age is assigned 18 as specified
+```
+另一种初始化成员的方式是使用**初始化列表**, 冒号后面列出了各个成员变量及其初始值, 可以将上下代码对比着看：
+```c
+class Human 
+{ 
+private: 
+ string name; 
+ int age; 
+
+public: 
+ // two parameters to initialize members age and name 
+ Human(string humansName, int humansAge) 
+ :name(humansName), age(humansAge) 
+ { 
+ cout << "Constructed a human called " << name; 
+ cout << ", " << age << " years old" << endl; 
+ } 
+// ... other class members 
+};
+```
+
+### 析构函数
+也是一种特殊的函数，与类同名，但前面有一个腭化符号（～）
+构造函数在实例化对象时被调用，而析构函数在**对象销毁时**自动被调用。
+
+**声明和实现**
+```c
+//在类声明中实现（定义）
+class Human 
+{ 
+public: 
+ ~Human() 
+ { 
+ // destructor code here 
+ } 
+}; 
+
+//在类声明外定义
+class Human 
+{ 
+public: 
+ ~Human(); // destructor declaration 
+}; 
+
+Human::~Human() 
+{ 
+ // destructor code here 
+} 
+```
+每当对象不再在作用域内或通过 delete 被删除进而被销毁时，都将调用析构函数。这使得析构函数成为*重置*变量以及*释放*动态分配的内存和其他资源的理想场所
+如：某个类中，在构造函数中new, 在析构函数中delete, 使该类不仅对程序员隐藏了内存管理实现，还正确地释放了分配的内存。
+（*析构函数不能重载*）
+
+### 复制构造函数
+浅复制的问题：*复制类的对象时*，将复制其指针成员，但不复制指针指向的缓冲区，其结果是两个对象指向同一块动态分配的内存。销毁其中一个对象时，delete[]释放这个内存块，导致另一个对象存储的指针拷贝无效。这种复制被称为浅复制，会威胁程序的稳定性
+
+因此使用复制构造函数确保*深复制*，这是一个重载的构造函数，每当**对象被复制时**，编译器都将调用复制构造函数。
+```c
+class MyString 
+{ 
+   private:...
+   public:
+   MyString(const char* initString)
+   ...
+   MyString(const MyString& copySource) // copy constructor 
+   {  //使用 const，可确保复制构造函数不会修改指向的源对象
+   // Copy constructor implementation code 
+   }
+}; 
+
+//以确保在main中函数调用时进行深复制
+MyString sayHello("Hello world！");
+UseMyString(sayHello);  //自动调用复制构造函数
+```
+(*类包含原始指针成员（char\* 等）时，务必编写复制构造函数和复制赋值运算符。
+务必将类成员声明为 std::string 和智能指针类（而不是原始指针），因为它们实现了复制构造函数，可减少工作量。*)
+
+移动构造函数 `MyString(MyString&& moveSource) `：编译器将自动使用它来“移动”临时资源，从而避免深复制
+### 构造函数和析构函数的其他用途
+禁止类对象被复制：声明一个私有的复制构造函数 `private: President(const President&);`
+
+只能有一个实例的单例类：使用关键字 `static`
+```c
+class President
+{
+    private:
+        President() {};  // 私有的默认构造函数，防止外部创建实例
+        President(const President&);  // 私有的拷贝构造函数，防止对象拷贝
+        const President& operator=(const President);  // 私有的赋值运算符重载，防止对象赋值
+
+        string name;  // 私有成员变量，用于存储总统的名字
+
+    public:
+        static President& GetInstance()  // 静态方法，用于获取唯一的实例
+        {
+            static President onlyInstance;  // 在首次调用时创建唯一实例
+            return onlyInstance;
+        }
+
+        string GetName()  // 公有方法，用于获取总统的名字
+        { return name; }
+
+        void SetName(string InputName)  // 公有方法，用于设置总统的名字
+        { name = InputName; }
+};
+
+int main()
+{
+    President& onlyPresident = President::GetInstance();  // 获取 President 实例的引用
+    onlyPresident.SetName("Abraham Lincoln");  // 设置总统名字
+    cout << "President is: " << President::GetInstance().GetName() << endl;  // 输出总统名字
+    return 0;
+}
+```
+禁止在栈中实例化的类(栈空间通常有限): 将析构函数声明为私有的
+```c
+class MonsterDB 
+{ 
+private: 
+ ~MonsterDB(); // private destructor 
+ //... members that consume a huge amount of data 
+}; 
+通过声明私有的析构函数，可禁止像下面这样创建实例：
+int main() 
+{ 
+ MonsterDB myDatabase; // compile error 
+ // … more code 
+ return 0; 
+} 
+```
+使用构造函数进行类型转换：
+```c
+class Human 
+{ 
+ int age;  // 私有成员变量 age，表示人的年龄
+public: 
+ Human(int humansAge): age(humansAge) {}  // 构造函数，接受人的年龄作为参数并初始化成员变量 age
+}; 
+
+// Function that takes a Human as a parameter 
+void DoSomething(Human person) 
+{ 
+ cout << "Human sent did something" << endl;  // 输出信息
+ return;  // 返回
+}
+
+int main()
+{
+ Human kid(10);  //利用构造函数显式转换：将整数 10 转换为 Human 类型对象
+ //在这里，通过构造函数 Human(int humansAge) 创建了一个名为 kid 的 Human 类型对象，传递整数值 10 作为构造函数的参数。
+ //这个构造函数被用来创建 Human 类型对象，并将整数 10 转换为 kid 的一个属性，即年龄
+ DoSomething(kid);  // 调用 DoSomething 函数，将 kid 作为参数传递
+ return 0;
+
+ //隐式转换:
+ Human anotherKid = 11; // int converted to Human 
+ DoSomething(10); // 10 converted to Human! 
+}
+ //使用关键字 explicit 可禁止隐式转换，使上面两行编译失败:
+ explicit Human(int humansAge): age(humansAge) {}
+```
+
+**this 指针** :  在类中，关键字 this 包含当前对象的地址,当您在类成员方法中调用其他成员方法时，编译器将隐式地传递 this 指针—函数调用中不可见的参数 
+`Talk("Bla bla"); // same as Talk(this, "Bla Bla") `
+*this表示当前对象的指针。它是一个特殊的指针，指向类的实例或对象自身
+
+**sizeof( )** ： 指出类声明中所有数据属性占用的总内存量，单位为字节 （结果受字填充word padding和其他因素的影响）
+
+**关键字 struct** 来自 C 语言，在 C++编译器看来，它与类及其相似，差别在于程序员未指定时，默认的访问限定符（public 和 private）不同，不同于结构，类的成员默认为私有
+```c
+//C++ Class
+class Human
+{
+private:
+   int age;
+   bool gender;
+   MyString name;
+
+public:
+   Human(const MyString& InputName, int InputAge, bool InputGender)
+      : name(InputName), age (InputAge), gender(InputGender) {}
+
+   int GetAge ()
+   { return age; }
+};
+
+//C struct, 除非指定了，否则结构中的成员默认为公有的, 另外，除非指定了，否则结构以公有方式继承基结构
+struct Human 
+{ 
+ Human(const MyString& humansName, int humansAge, bool humansGender) 
+ : name(humansName), age (humansAge), Gender(humansGender) {} 
+
+ int GetAge () 
+ { 
+ return age; 
+ } 
+
+private: 
+ int age; 
+ bool gender; 
+ MyString name; 
+};
+
+//结构 Human 与类 Human 很像；结构的实例化与类的实例化也很像：
+Human firstMan("Adam", 25, true); // an instance of struct Human
+```
+
+**声明友元**： 使用关键字 friend ，从外部访问类的私有数据成员和方法
+```c
+private: 
+   friend void DisplayAge(const Human& person); //指出DisplayAge( )是 Human 类的友元，能够访问Human类的私有数据成员
+   //friend class Utility; //指出 Utility 类是 Human 类的友元
+   ...
+
+void DisplayAge(const Human& person) 
+   { 
+   cout << person.age << endl; 
+   } 
+```
+
+**共用体**：使用关键字 union声明，是一种特殊的类，每次只有一个非静态数据成员处于活动状态。在结构中，常使用共用体来模拟复杂的数据类型
+```c
+union UnionName 
+{ 
+ Type1 member1; 
+ Type2 member2; 
+…
+};
+//实例化并使用共用体：
+UnionName unionObject; 
+unionObject.member2 = value; // choose member2 as the active member
+
+//在结构中，常使用共用体来模拟复杂的数据类型
+struct  ComplexType
+{
+    enum DataType //使用枚举来存储信息类型
+    {
+        Int,
+        Char
+    }Type;
+
+    union Value   //使用共用体来存储实际值
+    {
+        int num;
+        char alphabet;
+
+        Value() {}
+        ~Value() {}
+    }value;
+};
+```
+**聚合初始化**：即满足如下条件的类或结构为聚合类型，可作为一个整体进行初始化：只包含公有和非静态数据成员，而不包含私有或受保护的数据成员；不包含任何虚成员函数；只涉及公有继承（不涉及私有、受保护和虚拟继承）；不包含用户定义的构造函数。
+```c
+struct Aggregate2 
+{ 
+ int num; 
+ char hello[6]; 
+ int impYears[5]; 
+}; 
+
+//对于这个结构，可像下面这样进行初始化：
+Aggregate2 a2 {42, {'h', 'e', 'l', 'l', 'o'}, {1998, 2003, 2011, 2014, 2017}};
+```
+定义常量表达式的关键字 **constexpr** 也可用于类和结果为常量的对象
+`constexpr Human(int humansAge) :age(humansAge) {}`
+
+## 10.实现继承
+面向对象编程基于 4 个重要方面：封装、抽象、继承和多态。继承是一种强大的属性重用方式，是通向多态的跳板.
+
+### 继承和派生
+继承: 从一个包含通用属性且实现了通用功能的基类（超类）派生出类似的类，并在派生类（子类）中覆盖基本功能，以实现让每个类都独一无二的行为。
+
+**公有继承 public**：
+```c
+class Base 
+{ 
+ // ... base class members 
+}; 
+class Derived: public Base    //public：公有继承，is-a关系，可通过派生类的对象来访问基类的公有成员
+{ 
+ // ... derived class members 
+}; 
+
+```
+
+
+**基类初始化** 向基类传递参数: 如果基类包含重载的构造函数，需要在实例化时给它提供实参,就使用初始化列表，并通过派生类的构造函数调用合适的基类构造函数
+```c
+class Base 
+{ 
+public: 
+ Base(int someNumber) // overloaded constructor 
+ { 
+ // Use someNumber 
+ } 
+}; 
+
+class Derived: public Base 
+{
+public: 
+ Derived(): Base(25) // instantiate Base with argument 25 
+ { 
+ // derived class constructor code 
+ } 
+};    
+```
+
+**覆盖基类**: 派生类实现从基类继承的函数，且返回值和特征标相同的情况
+```c
+class Base 
+{ 
+public: 
+ void DoSomething() 
+ { 
+ // implementation code… Does something 
+ } 
+}; 
+
+class Derived:public Base 
+{ 
+public: 
+ void DoSomething() 
+ { 
+ // implementation code… Does something else 
+ //也可以用作用域解析运算符（::）在派生类中调用基类方法
+   Base::DoSomething   
+ } 
+}; 
+
+//调用基类中被覆盖的方法
+int main()
+{
+   Derived test;
+   test.DoSomething();     //被覆盖
+   test.Base::DoSomething; //未覆盖，调用基类中的方法
+}
+
+//隐藏问题：覆盖可能导致派生类隐藏基类的所有重载版本，使调用重载产生编译错误（被隐藏）
+//可使用关键字 using 避免隐藏基类方法
+```
+构造顺序：基类对象在派生类对象之前被实例化，实例化时，先实例化成员属性，再调用构造函数；析构顺序正好相反。
+
+**私有继承 private**
+私有继承使得只有子类才能使用基类的属性和方法，继承派生类的类不能访问基类的成员, 因此也被称为 *has-a* 关系, 指定派生类的基类时使用关键字 private：
+```c
+class Base 
+{ 
+ // ... base class members and methods 
+}; 
+class Derived: private Base // private inheritance  类的继承关系默认为私有
+{ 
+ // ... derived class members and methods 
+}; 
+```
+
+**保护继承 protected**
+继承派生类的类能够访问基类的公有和保护方法，但不能通过派生类的对象来访问基类的公有成员；
+使用访问限定符 protected: 对需要继承的基类属性进行保护,让基类的某些属性能在派生类中访问，但不能在继承层次结构外部访问
+```c
+class Derived: protected Base
+//...
+//子类的子类能够访问 Base 类的公有和保护成员:
+class Derived2: protected Derived 
+{ 
+ // can access public & protected members of Base 
+}; 
+```
+
+切除（slicing）问题: 复制对象时不要按值传递参数，而应以指向基类的指针或 const 引用的方式传递
+
+多继承: 
+```c
+class Derived: public Base1, publice Base2 
+{ 
+ // class members 
+};
+```
+使用 final 禁止继承: `class Derived final: public Base1, publice Base2 `
+
+> 要建立 is-a 关系，务必创建公有继承层次结构。
+要建立 has-a 关系，务必创建私有或保护继承层次结构。(仅当必要时才使用私有或保护继承)
+无论继承关系是什么，派生类都不能访问基类的私有成员。一个例外是类的友元函数和友元类
+
+## 11.多态
+面向对象编程的核心——多态
+多态：将派生类对象视为基类对象，并执行派生类的实现
+
+**虚函数 virtual**
+使用虚函数实现多态行为
+```c
+class Base 
+{ 
+ virtual ReturnType FunctionName (Parameter List); 
+}; 
+class Derived 
+{ 
+ ReturnType FunctionName (Parameter List); 
+}; 
+```
+使用关键字 virtual, Swim( )被声明为虚函数，确保编译器调用覆盖版本
+对于将被派生类覆盖的基类方法，务必将其声明为虚函数。
+
+作用：对于使用 new 在自由存储区中实例化的派生类对象，如果将其赋给基类指针，并通过该指针调用 delete，将不会调用派生类的析构函数。这可能导致资源未释放、内存泄露等问题，因此可将**析构函数声明为虚函数**
+```c
+class Base 
+{ 
+public: 
+ virtual ~Base() {}; // virtual destructor 
+}; 
+```
+
+**抽象基类和纯虚函数**
+不能实例化的基类被称为抽象基类，这样的基类只有一个用途，那就是从它派生出其他类（充当接口）。在 C++中，要创建抽象基类，可声明纯虚函数。
+```c
+class AbstractBase 
+{ 
+public: 
+ virtual void DoSomething() = 0; // pure virtual method 
+}; 
+//该声明告诉编译器，AbstractBase 的派生类必须实现方法 DoSomething()：
+class Derived: public AbstractBase 
+{ 
+public: 
+ void DoSomething() // pure virtual fn. must be implemented 
+ { 
+ cout << "Implemented virtual function" << endl; 
+ } 
+}; 
+```
+抽象基类提供了一种非常好的机制，能够声明所有派生类都必须实现的函数。如果 Trout 类从Fish 类派生而来，但没有实现 Trout::Swim( )，将无法通过编译
+
+**虚继承 virtual**
+使用**虚继承**解决菱形问题：在继承层次结构中，继承多个从同一个类派生而来的基类时，如果这些基类没有采用虚继承，将导致二义性，因此，如果派生类可能被用作基类，派生时最好使用*虚继承*：
+```c
+class Derived1: public virtual Base 
+{ 
+ // ... members and functions 
+}; 
+```
+> 用于创建继承层次结构和声明基类函数时，关键字 virtual 的作用不同:
+在函数声明中，virtual 意味着当基类指针指向派生对象时，通过它可调用派生类的相应函数。
+从 Base 类派生出 Derived1 和 Derived2 类时，如果使用了关键字 virtual，则意味着再从Derived1 和 Derived2 派生出 Derived3 时，每个 Derived3 实例只包含一个 Base 实例。
+
+表明覆盖意图的限定符 **override** , 来核实被覆盖的函数在基类中是否被声明为虚的
+```c
+class Tuna:public Fish 
+{ 
+public: 
+ void Swim() const override // Error: no virtual fn with this sig in Fish 
+ { 
+ cout << "Tuna swims!" << endl; 
+ } 
+}; 
+```
+在派生类中声明要覆盖基类函数的函数时，务必使用关键字 override。
+
+使用 **final** 来禁止覆盖函数, 被声明为 final 的虚函数，不能在派生类中进行覆盖
+```c
+class Tuna:public Fish 
+{ 
+public: 
+ void Swim() override final  // override Fish::Swim and make this final 
+ { 
+ cout << "Tuna swims!" << endl; 
+ } 
+};//可继承这个版本的 Tuna 类，但不能进一步覆盖函数 Swim()
+```
+
+虚函数 Clone 模拟虚复制构造函数：
+```c
+#include <iostream>        //头文件
+using namespace std;     //名称空间
+
+class Fish     //定义Fish类作为基类
+{
+   public:
+      virtual Fish* Clone()=0;   //声明一个纯虚函数Clone 用于克隆对象
+      virtual void Swim()=0;     //声明一个纯虚函数Swim
+      virtual ~Fish() {};     //声明虚析构函数
+};
+
+class Tuna: public Fish    //定义Tuna类，继承自Fish
+{
+   public:
+      Fish* Clone() override  //实现Clone函数，返回一个克隆对象指针
+      {
+         return new Tuna (*this);   //*this表示当前对象的指针
+      }
+
+   void Swim() override final //final使它的派生类无法覆盖swim
+   {
+      cout << "Tuna swims fast in the sea" << endl;
+   }
+};
+
+class BluefinTuna final:public Tuna // 定义BluefinTuna类，继承自Tuna
+{
+   public:
+      Fish* Clone() override  //无法覆盖Tuna类中的Swim函数
+      {//调用 Swim()时执行 Tuna::Swim()
+         return new BluefinTuna(*this);
+      }
+};
+
+class Carp final: public Fish // 定义Carp类，继承自Fish
+{
+   Fish* Clone() override{
+      return new Carp(*this);
+   }
+   void Swim() override final  // 实现Carp的Swim函数
+   {
+      cout << "Carp swims slow in the lake" << endl;
+   }
+} ;
+
+int main()
+{
+   const int ARRAY_SIZE =4;
+
+   Fish* myFishes[ARRAY_SIZE]={NULL};  //声明静态基类指针（Fish *）数组，创建对象
+   myFishes[0]=new Tuna();
+   myFishes[1]=new Carp();
+   myFishes[2]=new BluefinTuna();
+   myFishes[3]=new Carp();
+
+   Fish* myNewFishes[ARRAY_SIZE];
+   for (int index=0; index < ARRAY_SIZE; ++index)
+      myNewFishes[index]=myFishes[index]->Clone(); // 使用Clone函数克隆原对象到另一个数组
+
+   for (int index=0; index<ARRAY_SIZE; ++index)
+      myNewFishes[index]->Swim();   // 调用克隆对象的Swim函数，以验证 Clone( )复制了整个派生类对象
+
+   for (int index=0; index<ARRAY_SIZE; ++index)
+      {  // 释放内存
+         delete myFishes[index];
+         delete myNewFishes[index];
+      }
+
+      return 0;
+}
+```
+
+
+
+
+
+
+
 
 
 
@@ -171,6 +1072,7 @@ string greetString ("Hello std::string!");
 
 
 ------------------------------------------------------------------
+------------------------------------------------------------------
 
 # Cmake
 [CMake](www.cmake.org) 是一个跨平台的开源构建管理系统，用于自动化应用程序的构建、测试和打包过程。它使用类似于Makefile的文本文件来描述构建过程中所需的所有组件和依赖项，并将其转换为适合各种不同编译器和操作系统的本地构建系统的配置文件。总之，CMake就是一个将多个cpp,hpp文件组合构建为一个大工程的语言。
@@ -178,7 +1080,10 @@ string greetString ("Hello std::string!");
 [Cmake 实践](https://github.com/gavinliu6/CMake-Practice-zh-CN) 在实践中上手的教程
 [cmake-examples-Chinese](https://github.com/SFUMECJF/cmake-examples-Chinese) 例程
 
+[C-coding/Cmake at main · Arrowes/C-coding](https://github.com/Arrowes/C-coding/tree/main/Cmake)
+
 ## [Cmake 实践](https://gavinliu6.github.io/CMake-Practice-zh-CN/#/)
+
 ### t1 [创建Hello world](https://github.com/gavinliu6/CMake-Practice-zh-CN/blob/master/hello-world.md)
 建立main.c与CMakeLists.txt并编译（需要为每一个子目录建立一个CMakeLists.txt）
 ```sh
@@ -252,7 +1157,7 @@ CMAKE_CURRENT_SOURCE_DIR    #当前处理的 CMakeLists.txt 所在的路径
 CMAKE_CURRRENT_BINARY_DIR   #若是 in-source 编译，同上一致，对out-ofsource 编译，他指的是 target 编译目录。
 CMAKE_CURRENT_LIST_FILE #输出调用这个变量的 CMakeLists.txt 的完整路径
 CMAKE_CURRENT_LIST_LINE #输出这个变量所在的行
-CMAKE_MODULE_PATH   #定义自己的 cmake 模块所在的路径
+CMAKE_MODULE_PATH       #定义自己的 cmake 模块所在的路径
 EXECUTABLE_OUTPUT_PATH，LIBRARY_OUTPUT_PATH #分别用来重新定义最终结果的存放目录，如SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 PROJECT_NAME    #返回通过 PROJECT 指令定义的项目名称
 
@@ -313,35 +1218,38 @@ export PKG_CONFIG_PATH=/home/ywang85/opencv/lib/cmake/opencv4/:$PKG_CONFIG_PATH 
 <details>
   <summary>边缘提取程序</summary>
 
-      #include <opencv2/core/core.hpp>
-      #include <opencv2/imgproc/imgproc.hpp>
-      #include <opencv2/highgui/highgui.hpp>
-      #include <math.h>
-      #include <iostream>
-      using namespace cv;
-      using namespace std;
-      
-      int threshold_value = 100, threshold_max = 255;
-      int threshold_type = 0, threshold_type_max = 4;
-      string outwindow = "threshold img";
-      Mat src, dst;
-      int main(){
-         Mat src1;
-         src1 = imread("1.jpg");
-         resize(src1, src, Size(src1.cols, src1.rows)); 
-         //resize(src1, src, Size(src1.cols/2, src1.rows/2)); //缩小一半
-         if (!src.data){
-            printf("cannot load image ...");
-            return -1;
-         }
-         Mat src_gray;
-         cvtColor(src, src_gray, COLOR_BGR2GRAY);
-         Canny(src_gray, dst, 100, 200);//canny边缘检测算子
-         imwrite("canny.jpg", dst);
-         imwrite("canny2.jpg", ~dst); //dst按照像素值取反
-         return 0;
-      }
+```c
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <math.h>
+#include <iostream>
+using namespace cv;
+using namespace std;
+
+int threshold_value = 100, threshold_max = 255;
+int threshold_type = 0, threshold_type_max = 4;
+string outwindow = "threshold img";
+Mat src, dst;
+int main(){
+   Mat src1;
+   src1 = imread("1.jpg");
+   resize(src1, src, Size(src1.cols, src1.rows)); 
+   //resize(src1, src, Size(src1.cols/2, src1.rows/2)); //缩小一半
+   if (!src.data){
+      printf("cannot load image ...");
+      return -1;
+   }
+   Mat src_gray;
+   cvtColor(src, src_gray, COLOR_BGR2GRAY);
+   Canny(src_gray, dst, 100, 200);//canny边缘检测算子
+   imwrite("canny.jpg", dst);
+   imwrite("canny2.jpg", ~dst); //dst按照像素值取反
+   return 0;
+}
+```
 </details>
+
 使用OpenCV的canny算子检测边缘
 
 **3.写CMake**
