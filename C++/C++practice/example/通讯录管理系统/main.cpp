@@ -1,3 +1,5 @@
+//https://www.bilibili.com/video/BV1et411b73Z?p=72
+
 #include <iostream>
 #include <cstdlib> // for rand() and srand()
 #include <ctime>   // for time()
@@ -23,7 +25,7 @@ struct Addressbooks
     int m_Size;
 };
 
-//添加联系人
+//1.添加联系人
 void addPerson(Addressbooks * abs)
 {
     if(abs->m_Size==MAX)
@@ -69,13 +71,13 @@ void addPerson(Addressbooks * abs)
         abs->personArray[abs->m_Size].m_Addr=address;
 
         abs->m_Size++;
-        cout<<"添加成功"<<endl;
+        cout<<"添加成功!"<<endl;
         system("read -p 'Press Enter to continue...' var");
         system("clear");
     }
 }
 
-//显示联系人
+//2.显示联系人
 void showPerson(Addressbooks * abs)//用指针的方式传通讯录进来
 {
     if (abs->m_Size==0)
@@ -96,6 +98,139 @@ void showPerson(Addressbooks * abs)//用指针的方式传通讯录进来
     system("read -p 'Press Enter to continue...' var");
     system("clear");
 }
+
+//3.删除联系人
+int isExist(Addressbooks * abs, string name) //传入通讯录和姓名
+{
+    for (int i=0; i<abs->m_Size; i++)
+    {
+        if(abs->personArray[i].m_Name==name)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void deletePerson(Addressbooks * abs)   //把通讯录按地址的方式传递，用指针的形式接收
+{
+    cout << "请输入要删除的联系人姓名：";
+    string name;
+    cin >> name;
+    int ret = isExist(abs, name);
+    if (ret!=-1)
+    {
+        for(int i=ret; i < abs->m_Size;i++)
+        {
+            abs->personArray[i]=abs->personArray[i+1];   //数据前移
+        }
+        abs->m_Size--;
+        cout << "删除“ "<<name<<" ”成功"<< endl;
+    } 
+    else
+    {
+        cout << "查无此人"<<endl;
+    }
+    system("read -p 'Press Enter to continue...' var");
+    system("clear");
+}
+
+//4.查找联系人
+void findPerson(Addressbooks * abs)
+{
+    cout<<"请输入要查找的联系人: ";
+    string name;
+    cin >> name;
+
+    int ret = isExist(abs,name);
+    if (ret !=-1)
+    {
+        cout << "姓名："<<abs->personArray[ret].m_Name<<"\t";
+         cout << "性别："<<(abs->personArray[ret].m_Sex== 1?"男":"女")<<"\t"; 
+        cout << "年龄："<<abs->personArray[ret].m_Age<<"\t";
+        cout << "电话："<<abs->personArray[ret].m_Phone<<"\t";
+        cout << "住址："<<abs->personArray[ret].m_Addr<<endl;
+    }
+    else
+    {
+        cout << "查无此人"<<endl;
+    }
+    system("read -p 'Press Enter to continue...' var");
+    system("clear");
+}
+
+//5.修改联系人
+void modifyPerson(Addressbooks * abs)
+{
+    cout << "请输入要修改的联系人： "<< endl;
+    string name;
+    cin >> name;
+    int ret = isExist(abs,name);
+    if (ret !=-1)
+    {
+        cout<<"请输入姓名： ";
+        cin >> name;
+        abs->personArray[ret].m_Name=name;
+
+        cout<<"请输入性别：（1--男，2--女 ）： ";
+        while(true)
+        {        
+           int sex=0;
+            cin >> sex;
+            if(sex==1||sex==2)
+            {
+                abs->personArray[ret].m_Sex=sex;
+                break;
+            }
+            cin.clear();
+            cin.ignore();
+            cout << "错误，重新输入：";
+        }
+
+        cout << "请输入年龄：";
+        int age=0;
+        cin>>age;
+        abs->personArray[ret].m_Age=age;
+
+        cout << "请输入电话：";
+        string phone;
+        cin >> phone;
+        abs->personArray[ret].m_Phone=phone;
+
+        cout<<"请输入地址：";
+        string address;
+        cin>>address;
+        abs->personArray[ret].m_Addr=address;
+
+        cout<<"修改成功!"<<endl;
+    }
+    else 
+    {
+        cout << "查无此人"<<endl;
+    }
+        system("read -p 'Press Enter to continue...' var");
+        system("clear");
+}
+
+//6.清空联系人
+void cleanPerson(Addressbooks * abs)
+{
+    cout << "是否确认清空?(y/n)：";
+    string ret;
+    cin >> ret;
+    if  (ret=="y")
+    {
+        abs->m_Size=0;
+        cout << "已清空！" <<endl;
+    }
+    else
+    {
+    cout << "已取消" <<endl;
+    }
+    system("read -p 'Press Enter to continue...' var");
+     system("clear");
+}
+
 
 //Menu
 void showMenu(){
@@ -151,15 +286,19 @@ int main()
             break;
 
          case 3:     //3.删除联系人
+            deletePerson(&abs);
             break;
 
          case 4:     //4.查找联系人
+            findPerson(&abs);
             break;
 
         case 5:     // 5.修改联系人
+             modifyPerson(&abs);
             break;
 
         case 6:     //6.清空联系人
+            cleanPerson(&abs);
             break;
 
         case 0:     //0.退出通讯录
@@ -168,6 +307,8 @@ int main()
             break;
 
         default:
+            system("read -p 'Press Enter to continue...' var");
+            system("clear");
             break;
                   
     }
